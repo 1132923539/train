@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.canway.train.bean.ResultBean;
 import  com.canway.train.entity.UserDO;
 import com.canway.train.service.UserService;
+import com.canway.train.vo.LoginUser;
+import com.canway.train.vo.UserVo;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -15,10 +17,7 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -35,17 +34,15 @@ public class UserLoginController {
 
     /**
      * 用户登录
-     * @param userName  用户名
-     * @param password  密码
      * @return
      * @throws Exception
      */
-    @RequestMapping("/login")
-    public ResultBean userLogin(@RequestParam String userName, @RequestParam String password, HttpServletRequest request) throws Exception{
+    @PostMapping("/login")
+    public ResultBean userLogin(@RequestBody LoginUser loginUser) throws Exception{
         ResultBean resultBean = ResultBean.success();
         JSONObject jsonObject = new JSONObject();
         Subject subject = SecurityUtils.getSubject();
-        UsernamePasswordToken token = new UsernamePasswordToken(userName,password);
+        UsernamePasswordToken token = new UsernamePasswordToken(loginUser.getUserName(),loginUser.getPassword());
         try {
             subject.login(token);
             Session session = SecurityUtils.getSubject().getSession();

@@ -103,7 +103,9 @@ public class GroupServiceImpl extends BaseServiceImpl<GroupMapper,GroupDO> imple
                                     users.append(userDO.getName() + ",");
                                 }
                             }
-                            groupVO.setUsers(users.substring(0,users.length()-1));
+                            if (users.length() > 0){
+                                groupVO.setUsers(users.substring(0,users.length()-1));
+                            }
                         }
 
 

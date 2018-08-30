@@ -152,6 +152,7 @@ public class ScoreServiceImpl extends BaseServiceImpl<ScoreMapper,ScoreDO> imple
 
             if (list != null && list.size() >0 ){
                 groupScoreVO.setScore(list.get(0).getScore());
+                groupScoreVO.setScoreId(list.get(0).getId());
             }
 
             groupScoreVOList.add(groupScoreVO);
