@@ -32,16 +32,16 @@ public class ScoreController {
     private GroupUserService groupUserService;
 
     /**
-     * 根据用户id和培训id创建评分
+     * 创建评分
      */
     @PostMapping("/")
     public ResultBean selectScoreList(@RequestBody ScoreDO score){
         if (score != null && score.getTrainingId() != null && score.getUserId() != null && score.getGroupId() != null){
             Boolean result = scoreService.insert(score);
-            if (result == null){
-                return ResultBean.fail(null,"创建培训评分失败。",HttpStatus.INTERNAL_SERVER_ERROR);
+            if (result){
+                return ResultBean.success(score);
             }
-            return ResultBean.success(score);
+            return ResultBean.fail(null,"创建培训评分失败。",HttpStatus.INTERNAL_SERVER_ERROR);
         }else {
             return ResultBean.fail(null,"参数不能为空。",HttpStatus.BAD_REQUEST);
         }
@@ -57,13 +57,15 @@ public class ScoreController {
     @PutMapping("/{id}")
     public ResultBean updateScore(@PathVariable("id") Long id,@RequestBody ScoreDO score){
         if (id == null ){
-            return ResultBean.fail(null,"参数不能为空。",HttpStatus.BAD_REQUEST);
+            return ResultBean.fail(null,"参数不能为空",HttpStatus.BAD_REQUEST);
         }
+        score.setId(id);
         Boolean result = scoreService.updateById(score);
-        if (result == null){
-            return ResultBean.fail(null,"培训评分修改失败。",HttpStatus.INTERNAL_SERVER_ERROR);
+        if (result){
+            return ResultBean.success();
         }
-        return ResultBean.success(score);
+        return ResultBean.fail(null,"培训评分修改失败。",HttpStatus.INTERNAL_SERVER_ERROR);
+
     }
 
     /**
@@ -77,10 +79,11 @@ public class ScoreController {
             return ResultBean.fail(null,"参数不能为空",HttpStatus.BAD_REQUEST);
         }
         Boolean result = scoreService.deleteById(id);
-        if (result == null){
-            return ResultBean.fail(null,"培训评分删除失败",HttpStatus.INTERNAL_SERVER_ERROR);
+        if (result){
+            return ResultBean.success();
         }
-        return ResultBean.success();
+        return ResultBean.fail(null,"培训评分删除失败",HttpStatus.INTERNAL_SERVER_ERROR);
+
     }
 
     /**
@@ -148,7 +151,7 @@ public class ScoreController {
             groupDOList.addAll(groupService.selectList(new EntityWrapper<GroupDO>()
                     .eq("training_id",trainingId)
                     .eq("is_open",1)
-                    .ne("group_id",groupUserDOList.get(0).getGroupId())));
+                    .ne("id",groupUserDOList.get(0).getGroupId())));
         }else {
             groupDOList.addAll(groupService.selectList(new EntityWrapper<GroupDO>()
                     .eq("training_id",trainingId)
