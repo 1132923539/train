@@ -42,4 +42,6 @@ public class RuleScoreDO {
      * 加分扣分说明
      */
     private String remarks;
+
+    private Long trainingId;
 }

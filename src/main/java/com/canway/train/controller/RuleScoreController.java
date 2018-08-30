@@ -43,7 +43,7 @@ public class RuleScoreController {
      * @param ruleScoreDO
      */
     @PutMapping(value = "/{id}")
-    public ResultBean update(@PathVariable Long id, RuleScoreDO ruleScoreDO) {
+    public ResultBean update(@PathVariable Long id, @RequestBody RuleScoreDO ruleScoreDO) {
         if (null == id) {
             return ResultBean.fail(null, "ID类型错误", HttpStatus.NOT_FOUND);
         }

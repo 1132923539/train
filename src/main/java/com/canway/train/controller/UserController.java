@@ -64,6 +64,9 @@ public class UserController {
         if (userDO == null) {
             return ResultBean.fail(null, "用户不存在", HttpStatus.SERVICE_UNAVAILABLE);
         }
+        if (userVo.getOldPassword() == null || userVo.getNewPassword() == null || userVo.getId() == null) {
+            return ResultBean.fail(null, "参数错误", HttpStatus.SERVICE_UNAVAILABLE);
+        }
         if (!userVo.getOldPassword().equals(userDO.getPassword())) {
             return ResultBean.fail(null, "原密码错误", HttpStatus.SERVICE_UNAVAILABLE);
         }
