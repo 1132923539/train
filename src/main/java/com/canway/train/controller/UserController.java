@@ -2,17 +2,14 @@ package com.canway.train.controller;
 
 import com.baomidou.mybatisplus.mapper.Condition;
 import com.canway.train.bean.ResultBean;
-import com.canway.train.entity.KanBanDO;
 import com.canway.train.entity.UserDO;
 import com.canway.train.service.UserService;
+import com.canway.train.util.MD5Util;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
-import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import com.canway.train.vo.UserVo;
-
-import javax.websocket.server.PathParam;
 import java.util.List;
 
 
@@ -40,7 +37,7 @@ public class UserController {
      */
     @PostMapping(value = "/user",produces = "application/json;charset=UTF-8")
     public ResultBean insertUserDO(@RequestBody UserDO userDO){
-        userDO.setPassword("123456");
+        userDO.setPassword(MD5Util.string2MD5("123456"));
         boolean result = userService.insert(userDO);
         if(result){
             return ResultBean.success(userDO,"添加成功");
@@ -83,6 +80,9 @@ public class UserController {
             return ResultBean.fail(null,"删除不成功",HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
+
+
+
 
 
 
