@@ -45,7 +45,9 @@ public class ScoreServiceImpl extends BaseServiceImpl<ScoreMapper,ScoreDO> imple
         if (userDOList != null && userDOList.size() >0){
             //轮询所有用户计算出
             for (UserDO userDO:userDOList) {
-                scoreVOList.add(this.getScoreVo(trainingId,userDO,groupMap));
+                Map<Long,String> map = new HashMap<Long,String>();
+                map.putAll(groupMap);
+                scoreVOList.add(this.getScoreVo(trainingId,userDO,map));
             }
         }
         return scoreVOList;
