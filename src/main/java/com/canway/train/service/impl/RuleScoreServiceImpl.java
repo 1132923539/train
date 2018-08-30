@@ -33,7 +33,7 @@ public class RuleScoreServiceImpl extends BaseServiceImpl<RuleScoreMapper, RuleS
         List<RuleScoreVO> scoreVOList = new ArrayList<>();
 
         List<RuleScoreDO> ruleScores = this.selectList(new EntityWrapper<RuleScoreDO>().eq("training_id", trainingId));
-        if (trainingId.equals(0)) {
+        if (trainingId == 0) {
             ruleScores = this.selectList(null);
         }
 

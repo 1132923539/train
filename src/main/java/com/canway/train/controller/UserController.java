@@ -2,17 +2,16 @@ package com.canway.train.controller;
 
 import com.baomidou.mybatisplus.mapper.Condition;
 import com.canway.train.bean.ResultBean;
-import com.canway.train.entity.KanBanDO;
 import com.canway.train.entity.UserDO;
 import com.canway.train.service.UserService;
+import com.canway.train.vo.UserVo;
+import com.canway.train.util.MD5Util;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
-import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import com.canway.train.vo.UserVo;
 
-import javax.websocket.server.PathParam;
+import com.canway.train.vo.UserVo;
 import java.util.List;
 
 
@@ -40,7 +39,7 @@ public class UserController {
      */
     @PostMapping(value = "/user",produces = "application/json;charset=UTF-8")
     public ResultBean insertUserDO(@RequestBody UserDO userDO){
-        userDO.setPassword("123456");
+        userDO.setPassword(MD5Util.string2MD5("123456"));
         boolean result = userService.insert(userDO);
         if(result){
             return ResultBean.success(userDO,"添加成功");
@@ -64,7 +63,17 @@ public class UserController {
     @PutMapping(value = "/userPassword",produces = "application/json;charset=UTF-8")
     public ResultBean updatePassword(@RequestBody UserVo userVo){
         UserDO userDO = userService.selectById(userVo.getId());
-        userDO.setPassword(userVo.getNewPassword());
+        if (userDO == null) {
+            return ResultBean.fail(null, "用户不存在", HttpStatus.SERVICE_UNAVAILABLE);
+        }
+        if (userVo.getOldPassword() == null || userVo.getNewPassword() == null || userVo.getId() == null) {
+            return ResultBean.fail(null, "参数错误", HttpStatus.SERVICE_UNAVAILABLE);
+        }
+        if (!userVo.getOldPassword().equals(userDO.getPassword())) {
+            return ResultBean.fail(null, "原密码错误", HttpStatus.SERVICE_UNAVAILABLE);
+        }
+
+        userDO.setPassword(MD5Util.string2MD5(userVo.getNewPassword()));
         boolean result = userService.updateById(userDO);
         if(result){
             return ResultBean.success(userDO,"修改密码成功");
@@ -83,6 +92,9 @@ public class UserController {
             return ResultBean.fail(null,"删除不成功",HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
+
+
+
 
 
 
