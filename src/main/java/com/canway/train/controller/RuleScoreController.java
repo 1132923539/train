@@ -1,5 +1,6 @@
 package com.canway.train.controller;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.canway.train.bean.ResultBean;
 import com.canway.train.bean.RuleScoreVO;
 import com.canway.train.entity.RuleScoreDO;
@@ -54,9 +55,19 @@ public class RuleScoreController {
         return ResultBean.success(b, "success", HttpStatus.OK);
     }
 
-    @GetMapping("/ruleScoreList")
-    public ResultBean list() {
-        List<RuleScoreDO> ruleScoreList = ruleScoreService.selectList(null);
+    /**
+     * {trainingId}=0 时查所有列表
+     *
+     * @param trainingId
+     * @return
+     */
+    @GetMapping("/{trainingId}/ruleScoreList")
+    public ResultBean list(@PathVariable("trainingId") Long trainingId) {
+        List<RuleScoreDO> ruleScoreList = ruleScoreService.selectList(new EntityWrapper<RuleScoreDO>().eq("training_id", trainingId));
+        if (trainingId.equals(0)) {
+            ruleScoreList = ruleScoreService.selectList(null);
+        }
+
         if (ruleScoreList == null) {
             ruleScoreList = new ArrayList<>();
         }

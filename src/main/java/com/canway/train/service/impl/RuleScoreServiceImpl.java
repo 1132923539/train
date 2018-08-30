@@ -33,10 +33,15 @@ public class RuleScoreServiceImpl extends BaseServiceImpl<RuleScoreMapper, RuleS
         List<RuleScoreVO> scoreVOList = new ArrayList<>();
 
         List<RuleScoreDO> ruleScores = this.selectList(new EntityWrapper<RuleScoreDO>().eq("training_id", trainingId));
+        if (trainingId.equals(0)) {
+            ruleScores = this.selectList(null);
+        }
+
         List<GroupDO> groups = groupService.selectList(new EntityWrapper<GroupDO>().eq("training_id", trainingId));
         List<UserDO> users = userService.selectList(null);
 
-        ruleScores.forEach(ruleScoreDO -> {
+        for (RuleScoreDO ruleScoreDO : ruleScores) {
+
             //给RuleScoreVO 赋值组名
             Stream<String> groupNames = groups.stream().filter(group -> ruleScoreDO.getGroupId().equals(group.getId())).map(g -> g.getName());
             String groupName = (String) groupNames.toArray()[0];
@@ -60,7 +65,7 @@ public class RuleScoreServiceImpl extends BaseServiceImpl<RuleScoreMapper, RuleS
             ruleScoreVO.setRemarks("这是一个字段");
 
             scoreVOList.add(ruleScoreVO);
-        });
+        }
 
         return scoreVOList;
     }
