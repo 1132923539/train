@@ -56,7 +56,7 @@ public class RuleScoreController {
     }
 
     /**
-     * {trainingId}=0 时查所有列表
+     * {trainingId}=0 查询所有列表
      *
      * @param trainingId
      * @return

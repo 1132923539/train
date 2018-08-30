@@ -54,16 +54,20 @@ public class RuleScoreServiceImpl extends BaseServiceImpl<RuleScoreMapper, RuleS
             ruleScoreVO.setMembers(members);
 
             //给RuleScoreVO 赋值规则加分字段
-            int score = sum(ruleScores, "score");
-            ruleScoreVO.setScore(score);
+            Integer score = ruleScoreDO.getScore();
+            if (score >= 0) {
+                ruleScoreVO.setScore(score);
+            }
 
             // 给RuleScoreVO 赋值规则扣分字段
-            int points = sum(ruleScores, "points");
-            ruleScoreVO.setPoints(points);
+            if (score < 0) {
+                ruleScoreVO.setScore(score);
+            }
 
             // 给RuleScoreVO 赋值备注字段
-            ruleScoreVO.setRemarks("这是一个字段");
+            ruleScoreVO.setRemarks(ruleScoreDO.getRemarks());
 
+            ruleScoreVO.setId(ruleScoreDO.getId());
             scoreVOList.add(ruleScoreVO);
         }
 
@@ -88,27 +92,5 @@ public class RuleScoreServiceImpl extends BaseServiceImpl<RuleScoreMapper, RuleS
             }
             b.append(", ");
         }
-    }
-
-    private int sum(List<RuleScoreDO> ruleScores, String field) {
-        int sum = 0;
-        for (RuleScoreDO ruleScore : ruleScores) {
-            Integer score = ruleScore.getScore();
-            if (score == null) {
-                score = 0;
-            }
-            switch (field) {
-                case "points":
-                    if (score < 0) {
-                        sum += score;
-                    }
-                    break;
-                default:
-                    if (score > 0) {
-                        sum += score;
-                    }
-            }
-        }
-        return sum;
     }
 }
