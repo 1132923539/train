@@ -4,8 +4,11 @@ import com.baomidou.mybatisplus.mapper.Condition;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.canway.train.bean.ResultBean;
 import com.canway.train.bean.vo.GroupCreatorInfo;
+import com.canway.train.bean.vo.GroupVO;
 import com.canway.train.entity.GroupDO;
+import com.canway.train.entity.TrainingDO;
 import com.canway.train.service.GroupService;
+import com.canway.train.service.TrainingService;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +23,9 @@ public class GroupController {
 
     @Autowired
     private GroupService groupService;
+
+    @Autowired
+    private TrainingService trainingService;
 
     /**
      * 创建分组
@@ -111,6 +117,15 @@ public class GroupController {
         }
         return ResultBean.success(list);
     }
+
+    @GetMapping("/list")
+    public ResultBean selectGroupList(){
+        List<TrainingDO> trainingDOList = trainingService.selectList(new EntityWrapper<TrainingDO>());
+        List<GroupVO> list = groupService.selectGroupList(trainingDOList);
+        return ResultBean.success(list);
+    }
+
+
 
 
 

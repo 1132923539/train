@@ -4,14 +4,17 @@ import com.baomidou.mybatisplus.mapper.Condition;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.canway.train.bean.ResultBean;
 import com.canway.train.bean.vo.ScoreVO;
+import com.canway.train.entity.GroupDO;
+import com.canway.train.entity.GroupUserDO;
 import com.canway.train.entity.ScoreDO;
+import com.canway.train.service.GroupService;
 import com.canway.train.service.GroupUserService;
 import com.canway.train.service.ScoreService;
-import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -23,19 +26,22 @@ public class ScoreController {
     private ScoreService scoreService;
 
     @Autowired
+    private GroupService groupService;
+
+    @Autowired
     private GroupUserService groupUserService;
 
     /**
-     * 根据用户id和培训id创建评分
+     * 创建评分
      */
     @PostMapping("/")
     public ResultBean selectScoreList(@RequestBody ScoreDO score){
         if (score != null && score.getTrainingId() != null && score.getUserId() != null && score.getGroupId() != null){
             Boolean result = scoreService.insert(score);
-            if (result == null){
-                return ResultBean.fail(null,"创建培训评分失败。",HttpStatus.INTERNAL_SERVER_ERROR);
+            if (result){
+                return ResultBean.success(score);
             }
-            return ResultBean.success(score);
+            return ResultBean.fail(null,"创建培训评分失败。",HttpStatus.INTERNAL_SERVER_ERROR);
         }else {
             return ResultBean.fail(null,"参数不能为空。",HttpStatus.BAD_REQUEST);
         }
@@ -51,13 +57,15 @@ public class ScoreController {
     @PutMapping("/{id}")
     public ResultBean updateScore(@PathVariable("id") Long id,@RequestBody ScoreDO score){
         if (id == null ){
-            return ResultBean.fail(null,"参数不能为空。",HttpStatus.BAD_REQUEST);
+            return ResultBean.fail(null,"参数不能为空",HttpStatus.BAD_REQUEST);
         }
+        score.setId(id);
         Boolean result = scoreService.updateById(score);
-        if (result == null){
-            return ResultBean.fail(null,"培训评分修改失败。",HttpStatus.INTERNAL_SERVER_ERROR);
+        if (result){
+            return ResultBean.success();
         }
-        return ResultBean.success(score);
+        return ResultBean.fail(null,"培训评分修改失败。",HttpStatus.INTERNAL_SERVER_ERROR);
+
     }
 
     /**
@@ -71,10 +79,11 @@ public class ScoreController {
             return ResultBean.fail(null,"参数不能为空",HttpStatus.BAD_REQUEST);
         }
         Boolean result = scoreService.deleteById(id);
-        if (result == null){
-            return ResultBean.fail(null,"培训评分删除失败",HttpStatus.INTERNAL_SERVER_ERROR);
+        if (result){
+            return ResultBean.success();
         }
-        return ResultBean.success();
+        return ResultBean.fail(null,"培训评分删除失败",HttpStatus.INTERNAL_SERVER_ERROR);
+
     }
 
     /**
@@ -125,6 +134,31 @@ public class ScoreController {
         }
         List<ScoreVO> list = scoreService.selectScoreVOList(trainingId);
         return ResultBean.success(list);
+    }
+
+
+    //获取用户可以评分的分组信息
+    @GetMapping("/training/{trainingId}/user/{userId}")
+    public ResultBean selectGroupList(@PathVariable("trainingId") Long trainingId,@PathVariable("userId") Long userId){
+
+        //获取用户所在的分组
+        List<GroupUserDO> groupUserDOList = groupUserService.selectList(new EntityWrapper<GroupUserDO>()
+                .eq("training_id",trainingId).eq("user_id",userId));
+
+        List<GroupDO> groupDOList = new ArrayList<GroupDO>();
+        if (groupUserDOList != null && groupUserDOList.size() >0){
+            //过滤用户所在的分组和不能评分的分组
+            groupDOList.addAll(groupService.selectList(new EntityWrapper<GroupDO>()
+                    .eq("training_id",trainingId)
+                    .eq("is_open",1)
+                    .ne("id",groupUserDOList.get(0).getGroupId())));
+        }else {
+            groupDOList.addAll(groupService.selectList(new EntityWrapper<GroupDO>()
+                    .eq("training_id",trainingId)
+                    .eq("is_open",1)));
+        }
+
+        return ResultBean.success(groupDOList);
     }
 
 }

@@ -14,11 +14,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RuleScoreVO {
     /**
-     * 主键ID
-     */
-    private Long id;
-
-    /**
      * 分组名称
      */
     private String groupName;
