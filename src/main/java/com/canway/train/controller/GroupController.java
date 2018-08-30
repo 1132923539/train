@@ -3,6 +3,7 @@ package com.canway.train.controller;
 import com.baomidou.mybatisplus.mapper.Condition;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.canway.train.bean.ResultBean;
+import com.canway.train.bean.vo.GroupCreatorInfo;
 import com.canway.train.entity.GroupDO;
 import com.canway.train.service.GroupService;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
@@ -23,22 +24,16 @@ public class GroupController {
     /**
      * 创建分组
      * @param trainingId
-     * @param groupDO
+     * @param groupCreatorInfo
      * @return
      */
     @PostMapping("/training/{trainingId}")
-    public ResultBean creatorGroup(@PathVariable Long trainingId, @RequestBody GroupDO groupDO){
+    public ResultBean creatorGroup(@PathVariable Long trainingId, @RequestBody GroupCreatorInfo groupCreatorInfo){
         if (trainingId == null){
             return ResultBean.fail(null,"培训id不能为空。",HttpStatus.BAD_REQUEST);
         }
-        groupDO.setTrainingId(trainingId);
-        Boolean result = groupService.insert(groupDO);
-        if (result){
-            return ResultBean.success(groupDO,"分组创建成功");
-        }else{
-            return ResultBean.fail(null,"创建分组失败。",HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
+        groupCreatorInfo.setTrainingId(trainingId);
+        return groupService.creatorGroup(groupCreatorInfo);
     }
 
     /**
@@ -77,7 +72,7 @@ public class GroupController {
         if (selectById == null ){
             return ResultBean.fail(null,"没有对应的分组。",HttpStatus.NOT_FOUND);
         }
-        Boolean result =groupService.deleteById(id);
+        Boolean result =groupService.deleteGroup(id);
         if (result){
             return ResultBean.success(null,"分组删除成功");
         }else{
@@ -86,7 +81,7 @@ public class GroupController {
     }
 
     /**
-     * 根据培训id和分组id查询分组信息
+     * 根据分组id查询分组信息
      * @param id
      * @return
      */
