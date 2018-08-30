@@ -3,6 +3,7 @@ package com.canway.train.controller;
 import com.baomidou.mybatisplus.mapper.Condition;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.canway.train.bean.ResultBean;
+import com.canway.train.bean.vo.GroupScoreVO;
 import com.canway.train.bean.vo.ScoreVO;
 import com.canway.train.entity.GroupDO;
 import com.canway.train.entity.GroupUserDO;
@@ -141,24 +142,9 @@ public class ScoreController {
     @GetMapping("/training/{trainingId}/user/{userId}")
     public ResultBean selectGroupList(@PathVariable("trainingId") Long trainingId,@PathVariable("userId") Long userId){
 
-        //获取用户所在的分组
-        List<GroupUserDO> groupUserDOList = groupUserService.selectList(new EntityWrapper<GroupUserDO>()
-                .eq("training_id",trainingId).eq("user_id",userId));
+        List<GroupScoreVO> groupScoreVOList = scoreService.selectGroupList(trainingId,userId);
 
-        List<GroupDO> groupDOList = new ArrayList<GroupDO>();
-        if (groupUserDOList != null && groupUserDOList.size() >0){
-            //过滤用户所在的分组和不能评分的分组
-            groupDOList.addAll(groupService.selectList(new EntityWrapper<GroupDO>()
-                    .eq("training_id",trainingId)
-                    .eq("is_open",1)
-                    .ne("id",groupUserDOList.get(0).getGroupId())));
-        }else {
-            groupDOList.addAll(groupService.selectList(new EntityWrapper<GroupDO>()
-                    .eq("training_id",trainingId)
-                    .eq("is_open",1)));
-        }
-
-        return ResultBean.success(groupDOList);
+        return ResultBean.success(groupScoreVOList);
     }
 
 }

@@ -21,6 +21,6 @@ public class ScoreVO {
         private Long id; //'主键',
         private Long groupId; // '目标组ID',
         private String groupName;//目标分组名称
-        private int score; // '分数',
+        private Integer score; // '分数',
     }
 }
