@@ -30,13 +30,13 @@ public class GroupServiceImpl extends BaseServiceImpl<GroupMapper,GroupDO> imple
         Boolean result = this.insert(groupDO);
         if (result){
             groupCreatorInfo.setId(groupDO.getId());
-            List<UserDO> userDOList = groupCreatorInfo.getUsers();
-            if (userDOList != null && userDOList.size()>0){
-                for (UserDO userDO:userDOList) {
+            Long [] users = groupCreatorInfo.getUsers();
+            if (users != null && users.length >0){
+                for (Long userId:users) {
                     GroupUserDO groupUserDO = new GroupUserDO();
                     groupUserDO.setTrainingId(groupDO.getTrainingId());
                     groupUserDO.setGroupId(groupDO.getId());
-                    groupUserDO.setUserId(userDO.getId());
+                    groupUserDO.setUserId(userId);
                     groupUserService.insert(groupUserDO);
                 }
             }
