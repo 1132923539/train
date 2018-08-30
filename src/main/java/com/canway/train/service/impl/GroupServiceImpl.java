@@ -3,6 +3,7 @@ package com.canway.train.service.impl;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.canway.train.bean.ResultBean;
 import com.canway.train.bean.vo.GroupCreatorInfo;
+import com.canway.train.bean.vo.GroupScoreVO;
 import com.canway.train.bean.vo.GroupVO;
 import com.canway.train.entity.GroupDO;
 import com.canway.train.entity.GroupUserDO;
@@ -115,4 +116,6 @@ public class GroupServiceImpl extends BaseServiceImpl<GroupMapper,GroupDO> imple
 
         return groupVOList;
     }
+
+
 }

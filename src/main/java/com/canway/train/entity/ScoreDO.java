@@ -21,5 +21,5 @@ public class ScoreDO {
     private Long trainingId; // '培训ID',
     private Long userId; // '用户ID',
     private Long groupId; // '目标组ID',
-    private int score; // '分数',
+    private Integer score; // '分数',
 }
