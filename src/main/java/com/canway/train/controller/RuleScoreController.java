@@ -43,7 +43,7 @@ public class RuleScoreController {
      * @param ruleScoreDO
      */
     @PutMapping(value = "/{id}")
-    public ResultBean update(@PathVariable Long id, RuleScoreDO ruleScoreDO) {
+    public ResultBean update(@PathVariable Long id, @RequestBody RuleScoreDO ruleScoreDO) {
         if (null == id) {
             return ResultBean.fail(null, "ID类型错误", HttpStatus.NOT_FOUND);
         }
@@ -64,7 +64,7 @@ public class RuleScoreController {
     @GetMapping("/{trainingId}/ruleScoreList")
     public ResultBean list(@PathVariable("trainingId") Long trainingId) {
         List<RuleScoreDO> ruleScoreList = ruleScoreService.selectList(new EntityWrapper<RuleScoreDO>().eq("training_id", trainingId));
-        if (trainingId.equals(0)) {
+        if (trainingId == 0) {
             ruleScoreList = ruleScoreService.selectList(null);
         }
 
