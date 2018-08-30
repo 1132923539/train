@@ -2,13 +2,13 @@ package com.canway.train.bean;
 
 public class GroupScore {
 
-    public String group;
+    public String groupName;
 
     public String people;
 
     public Float total;
 
-    public Float avag;
+    public Float ava;
 
     public Integer rank;
 }
