@@ -2,9 +2,7 @@ package com.canway.train.controller;
 
 import com.canway.train.bean.ResultBean;
 import com.canway.train.entity.RuleScoreDO;
-import com.canway.train.entity.TrainingDO;
 import com.canway.train.service.RuleScoreService;
-import com.canway.train.service.TrainingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +38,7 @@ public class RuleScoreController {
         return ResultBean.success(b, "success", HttpStatus.OK);
     }
 
-
+    @GetMapping("/ruleScoreList")
     public ResultBean list() {
         List<RuleScoreDO> ruleScoreList = ruleScoreService.selectList(null);
         if (ruleScoreList == null) {
