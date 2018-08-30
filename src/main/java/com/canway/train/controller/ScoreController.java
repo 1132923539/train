@@ -4,14 +4,17 @@ import com.baomidou.mybatisplus.mapper.Condition;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.canway.train.bean.ResultBean;
 import com.canway.train.bean.vo.ScoreVO;
+import com.canway.train.entity.GroupDO;
+import com.canway.train.entity.GroupUserDO;
 import com.canway.train.entity.ScoreDO;
+import com.canway.train.service.GroupService;
 import com.canway.train.service.GroupUserService;
 import com.canway.train.service.ScoreService;
-import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -21,6 +24,9 @@ public class ScoreController {
 
     @Autowired
     private ScoreService scoreService;
+
+    @Autowired
+    private GroupService groupService;
 
     @Autowired
     private GroupUserService groupUserService;
@@ -125,6 +131,31 @@ public class ScoreController {
         }
         List<ScoreVO> list = scoreService.selectScoreVOList(trainingId);
         return ResultBean.success(list);
+    }
+
+
+    //获取用户可以评分的分组信息
+    @GetMapping("/training/{trainingId}/user/{userId}")
+    public ResultBean selectGroupList(@PathVariable("trainingId") Long trainingId,@PathVariable("userId") Long userId){
+
+        //获取用户所在的分组
+        List<GroupUserDO> groupUserDOList = groupUserService.selectList(new EntityWrapper<GroupUserDO>()
+                .eq("training_id",trainingId).eq("user_id",userId));
+
+        List<GroupDO> groupDOList = new ArrayList<GroupDO>();
+        if (groupUserDOList != null && groupUserDOList.size() >0){
+            //过滤用户所在的分组和不能评分的分组
+            groupDOList.addAll(groupService.selectList(new EntityWrapper<GroupDO>()
+                    .eq("training_id",trainingId)
+                    .eq("is_open",1)
+                    .ne("group_id",groupUserDOList.get(0).getGroupId())));
+        }else {
+            groupDOList.addAll(groupService.selectList(new EntityWrapper<GroupDO>()
+                    .eq("training_id",trainingId)
+                    .eq("is_open",1)));
+        }
+
+        return ResultBean.success(groupDOList);
     }
 
 }
