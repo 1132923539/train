@@ -1,6 +1,7 @@
 package com.canway.train.service.impl;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.canway.train.bean.vo.GroupScoreVO;
 import com.canway.train.bean.vo.ScoreVO;
 import com.canway.train.entity.GroupDO;
 import com.canway.train.entity.GroupUserDO;
@@ -11,6 +12,7 @@ import com.canway.train.service.GroupService;
 import com.canway.train.service.GroupUserService;
 import com.canway.train.service.ScoreService;
 import com.canway.train.service.UserService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +47,9 @@ public class ScoreServiceImpl extends BaseServiceImpl<ScoreMapper,ScoreDO> imple
         if (userDOList != null && userDOList.size() >0){
             //轮询所有用户计算出
             for (UserDO userDO:userDOList) {
-                scoreVOList.add(this.getScoreVo(trainingId,userDO,groupMap));
+                Map<Long,String> map = new HashMap<Long,String>();
+                map.putAll(groupMap);
+                scoreVOList.add(this.getScoreVo(trainingId,userDO,map));
             }
         }
         return scoreVOList;
@@ -108,5 +112,51 @@ public class ScoreServiceImpl extends BaseServiceImpl<ScoreMapper,ScoreDO> imple
         scoreVO.setUserName(userDO.getName());
         scoreVO.setScoreList(scoreList);
         return scoreVO;
+    }
+
+    /**
+     * //获取用户可以评分的分组信息
+     * @param trainingId 培训id
+     * @param userId 用户所在的组
+     * @return
+     */
+    @Override
+    public List<GroupScoreVO> selectGroupList(Long trainingId,Long userId) {
+        List<GroupScoreVO> groupScoreVOList = new ArrayList<GroupScoreVO>();
+
+        //获取用户所在的分组
+        List<GroupUserDO> groupUserDOList = groupUserService.selectList(new EntityWrapper<GroupUserDO>()
+                .eq("training_id",trainingId).eq("user_id",userId));
+
+        List<GroupDO> groupDOList = new ArrayList<GroupDO>();
+
+        //判断用户所在的分组和过滤不能评分的分组
+        if (groupUserDOList != null && groupUserDOList.size() >0){
+            groupDOList.addAll(groupService.selectList(new EntityWrapper<GroupDO>()
+                    .eq("training_id",trainingId)
+                    .eq("is_open",1)
+                    .ne("id",groupUserDOList.get(0).getGroupId())));
+        }else {
+            groupDOList.addAll(groupService.selectList(new EntityWrapper<GroupDO>()
+                    .eq("training_id",trainingId)
+                    .eq("is_open",1)));
+        }
+
+        for (GroupDO groupDO:groupDOList) {
+            GroupScoreVO groupScoreVO = new GroupScoreVO();
+            BeanUtils.copyProperties(groupDO,groupScoreVO);
+
+            //获取分组的评分
+            List<ScoreDO> list = this.selectList(new EntityWrapper<ScoreDO>().eq("training_id",trainingId)
+                    .eq("user_id",userId).eq("group_id",groupDO.getId()));
+
+            if (list != null && list.size() >0 ){
+                groupScoreVO.setScore(list.get(0).getScore());
+            }
+
+            groupScoreVOList.add(groupScoreVO);
+        }
+
+        return groupScoreVOList;
     }
 }
