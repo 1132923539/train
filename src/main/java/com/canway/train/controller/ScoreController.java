@@ -1,12 +1,10 @@
 package com.canway.train.controller;
 
-import com.baomidou.mybatisplus.mapper.Condition;
+
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.canway.train.bean.ResultBean;
 import com.canway.train.bean.vo.GroupScoreVO;
 import com.canway.train.bean.vo.ScoreVO;
-import com.canway.train.entity.GroupDO;
-import com.canway.train.entity.GroupUserDO;
 import com.canway.train.entity.ScoreDO;
 import com.canway.train.service.GroupService;
 import com.canway.train.service.GroupUserService;
