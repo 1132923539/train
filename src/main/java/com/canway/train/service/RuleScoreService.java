@@ -10,7 +10,13 @@ import java.util.List;
  */
 public interface RuleScoreService extends BaseService<RuleScoreDO> {
 
+    /**
+     * 查出所有规则得分列表
+     *
+     * @param trainingId
+     * @return
+     */
     List<RuleScoreVO> listAllRuleScore(Long trainingId);
 
-    void updateRuleScore(Long trainingId, Long ruleScoreId);
+
 }

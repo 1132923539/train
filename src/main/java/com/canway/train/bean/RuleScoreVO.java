@@ -3,6 +3,7 @@ package com.canway.train.bean;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author eltons,  Date on 2018-08-29.
@@ -10,6 +11,7 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class RuleScoreVO {
     /**
      * 主键ID
@@ -40,4 +42,5 @@ public class RuleScoreVO {
      * 备注
      */
     private String remarks;
+
 }
