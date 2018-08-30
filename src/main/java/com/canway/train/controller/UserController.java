@@ -39,7 +39,7 @@ public class UserController {
      */
     @PostMapping(value = "/user",produces = "application/json;charset=UTF-8")
     public ResultBean insertUserDO(@RequestBody UserDO userDO){
-        userDO.setPassword("123456");
+        userDO.setPassword(MD5Util.string2MD5("123456"));
         boolean result = userService.insert(userDO);
         if(result){
             return ResultBean.success(userDO,"添加成功");
@@ -73,7 +73,7 @@ public class UserController {
             return ResultBean.fail(null, "原密码错误", HttpStatus.SERVICE_UNAVAILABLE);
         }
 
-        userDO.setPassword(userVo.getNewPassword());
+        userDO.setPassword(MD5Util.string2MD5(userVo.getNewPassword()));
         boolean result = userService.updateById(userDO);
         if(result){
             return ResultBean.success(userDO,"修改密码成功");
