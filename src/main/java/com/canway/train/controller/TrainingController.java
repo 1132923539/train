@@ -75,6 +75,7 @@ public class TrainingController {
         if (null == trainingDO.getSubject()) {
             return ResultBean.fail(null, "培训主题不能为空", HttpStatus.NOT_FOUND);
         }
+
         trainingDO.setId(id);
         boolean b = trainingService.updateById(trainingDO);
         return ResultBean.success(b, "success", HttpStatus.OK);

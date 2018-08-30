@@ -64,7 +64,7 @@ public class RuleScoreController {
     @GetMapping("/{trainingId}/ruleScoreList")
     public ResultBean list(@PathVariable("trainingId") Long trainingId) {
         List<RuleScoreDO> ruleScoreList = ruleScoreService.selectList(new EntityWrapper<RuleScoreDO>().eq("training_id", trainingId));
-        if (trainingId.equals(0)) {
+        if (trainingId == 0) {
             ruleScoreList = ruleScoreService.selectList(null);
         }
 
