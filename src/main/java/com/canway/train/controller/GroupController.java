@@ -112,6 +112,14 @@ public class GroupController {
         return ResultBean.success(list);
     }
 
+    @GetMapping("/list")
+    public ResultBean selectGroupList(){
+        List<GroupDO> list = groupService.selectList(new EntityWrapper<GroupDO>());
+        return ResultBean.success(list);
+    }
+
+
+
 
 
 }

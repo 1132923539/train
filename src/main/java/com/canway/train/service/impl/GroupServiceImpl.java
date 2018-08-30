@@ -13,6 +13,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -23,7 +24,9 @@ public class GroupServiceImpl extends BaseServiceImpl<GroupMapper,GroupDO> imple
     @Autowired
     private GroupUserService groupUserService;
 
+
     @Override
+    @Transactional
     public ResultBean creatorGroup(GroupCreatorInfo groupCreatorInfo) {
         GroupDO groupDO = new GroupDO();
         BeanUtils.copyProperties(groupCreatorInfo,groupDO);
@@ -52,6 +55,7 @@ public class GroupServiceImpl extends BaseServiceImpl<GroupMapper,GroupDO> imple
      * @return
      */
     @Override
+    @Transactional
     public Boolean deleteGroup(Long id) {
         Boolean result = this.deleteById(id);
         if (result){
