@@ -1,6 +1,7 @@
 package com.canway.train.controller;
 
 import com.canway.train.bean.ResultBean;
+import com.canway.train.bean.RuleScoreVO;
 import com.canway.train.entity.RuleScoreDO;
 import com.canway.train.service.RuleScoreService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,21 @@ public class RuleScoreController {
 
     @Autowired
     private RuleScoreService ruleScoreService;
+
+    /**
+     * 获得得分展示列表
+     *
+     * @return
+     */
+    @GetMapping("/{trainingId}/getScoreList")
+    public ResultBean getScoreList(@PathVariable("trainingId") Long trainingId) {
+        List<RuleScoreVO> scoreVOList = ruleScoreService.listAllRuleScore(trainingId);
+        if (scoreVOList == null) {
+            scoreVOList = new ArrayList<>();
+        }
+        return ResultBean.success(scoreVOList, "success", HttpStatus.OK);
+    }
+
 
     /**
      * 更新
