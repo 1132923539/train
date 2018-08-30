@@ -4,6 +4,7 @@ package com.canway.train.config;
 import com.baomidou.mybatisplus.mapper.Condition;
 import com.canway.train.entity.UserDO;
 import com.canway.train.service.UserService;
+import com.canway.train.util.MD5Util;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -39,6 +40,8 @@ public class MyShiroRealm extends AuthorizingRealm {
             throws AuthenticationException {
                 //获取用户的输入的账号.
                 String username = (String) token.getPrincipal();
+                //char[] password = ((UsernamePasswordToken) token).getPassword();
+                //String pa = password.toString();
                 //实际项目中，这里可以根据实际情况做缓存，如果不做，Shiro自己也是有时间间隔机制，2分钟内不会重复执行该方法
                 List<UserDO> userInfoList = (List)userService.selectList(Condition.create().eq("account",username));
                 if (userInfoList.size() == 0) {
@@ -47,7 +50,7 @@ public class MyShiroRealm extends AuthorizingRealm {
                 }
                  //用户名，密码，realm名字
                 UserDO userInfo = userInfoList.get(0);
-                SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(username,userInfo.getPassword(),getName());
+                SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(username,MD5Util.convertMD5(userInfo.getPassword()),getName());
                 Session session = SecurityUtils.getSubject().getSession();
                 session.setAttribute("userSession", userInfo);
                 session.setAttribute("accountName",userInfo.getAccount());
