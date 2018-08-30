@@ -26,7 +26,7 @@ public class ScoreController {
     private GroupUserService groupUserService;
 
     /**
-     * 根据用户id和培训id获取评分列表
+     * 根据用户id和培训id创建评分
      */
     @PostMapping("/")
     public ResultBean selectScoreList(@RequestBody ScoreDO score){
@@ -99,6 +99,11 @@ public class ScoreController {
         }
     }
 
+    /**
+     * 根据id获取评分
+     * @param id
+     * @return
+     */
     @GetMapping("/{id}")
     public ResultBean selectScoreById(@PathVariable("id") Long id){
         if (id == null){

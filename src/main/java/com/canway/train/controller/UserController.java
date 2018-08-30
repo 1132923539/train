@@ -1,8 +1,11 @@
 package com.canway.train.controller;
 
+import com.baomidou.mybatisplus.mapper.Condition;
 import com.canway.train.bean.ResultBean;
+import com.canway.train.entity.KanBanDO;
 import com.canway.train.entity.UserDO;
 import com.canway.train.service.UserService;
+import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +22,16 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+
+    @GetMapping(value="/user")
+    public ResultBean listAllUser(HttpServletRequest request){
+        ResultBean resultBean = ResultBean.success();
+        List<UserDO> userList = userService.selectList(Condition.create());
+        resultBean.setData(userList);
+        return resultBean;
+    }
+
 
     /**
      * 新增用户

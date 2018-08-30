@@ -2,7 +2,10 @@ package com.canway.train.controller;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.canway.train.bean.ResultBean;
+import com.canway.train.bean.vo.GroupUserVO;
+import com.canway.train.entity.GroupDO;
 import com.canway.train.entity.GroupUserDO;
+import com.canway.train.service.GroupService;
 import com.canway.train.service.GroupUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +21,9 @@ public class GroupUserController {
     @Autowired
     private GroupUserService groupUserService;
 
+    @Autowired
+    private GroupService groupService;
+
     /**
      * 创建用户关联分组
      * @param trainingId
@@ -30,12 +36,35 @@ public class GroupUserController {
             return ResultBean.fail(null,"培训id不能为空。",HttpStatus.BAD_REQUEST);
         }
         groupUserDO.setTrainingId(trainingId);
-        Boolean result = groupUserService.insert(groupUserDO);
+        Boolean result = groupUserService.creatorGroup(groupUserDO);
         if (result){
             return ResultBean.success(groupUserDO,"用户关联分组创建成功");
         }else{
             return ResultBean.fail(null,"创建用户关联分组失败。",HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+
+    /**
+     * 修改用户关联分组
+     * @return
+     */
+    @PutMapping("/training/{trainingId}/user/{userId}/group/{groupId}")
+    public ResultBean updateGroupUser(@PathVariable("trainingId") Long trainingId,
+                                      @PathVariable("userId") Long userId,@PathVariable("groupId") Long groupId){
+        if (trainingId == null || userId == null || groupId == null){
+            return ResultBean.fail(null,"参数不能为空",HttpStatus.BAD_REQUEST);
+        }
+        GroupUserDO groupUserDO = new GroupUserDO();
+        groupUserDO.setGroupId(groupId);
+        Boolean result = groupUserService.update(groupUserDO,new EntityWrapper<GroupUserDO>()
+                .eq("training_id",trainingId).eq("user_id",userId));
+        if (result){
+            return ResultBean.success(groupUserDO,"用户关联分组修改成功");
+        }else{
+            return ResultBean.fail(null,"创建用户关联分组修改失败。",HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
 
@@ -58,19 +87,38 @@ public class GroupUserController {
     }
 
     /**
-     * 根据培训id和分组id查询用户关联分组列表
+     * 根据培训id和分组id查询用户信息
      */
     @GetMapping("/training/{trainingId}/group/{groupId}")
-    public ResultBean selectGroupByTrainingId(@PathVariable("trainingId") Long trainingId,@PathVariable("groupId") Long groupId){
+    public ResultBean selectGroupUserByGroupId(@PathVariable("trainingId") Long trainingId,@PathVariable("groupId") Long groupId){
         if (trainingId == null && groupId == null){
             return ResultBean.fail(null,"参数不能为空。",HttpStatus.BAD_REQUEST);
         }
-        List<GroupUserDO> list = groupUserService.selectList(new EntityWrapper<GroupUserDO>()
-                .eq("training_id",trainingId).eq("group_id",groupId));
-        if (list == null ){
-            return ResultBean.fail(null,"没有对应的分组用户信息。",HttpStatus.NOT_FOUND);
+        GroupDO group = groupService.selectById(groupId);
+        if (group == null ){
+            return ResultBean.fail(null,"无效的分组id",HttpStatus.BAD_REQUEST);
         }
-        return ResultBean.success(list);
+
+
+        GroupUserVO groupUserVO = groupUserService.selectGroupUserByGroupId(trainingId,group);
+        return ResultBean.success(groupUserVO);
+        }
+
+
+    /**
+     * 根据培训id分组获取用户信息
+     */
+    @GetMapping("/training/{trainingId}")
+    public ResultBean selectGroupUserByTrainingId(@PathVariable("trainingId") Long trainingId){
+        if (trainingId == null){
+            return ResultBean.fail(null,"参数不能为空。",HttpStatus.BAD_REQUEST);
+        }
+        List<GroupDO> groupDOList= groupService.selectList(new EntityWrapper<GroupDO>()
+                                                .eq("training_id",trainingId));
+
+        List<GroupUserVO> groupUserVOList = groupUserService.selectGroupUserByTrainingId(trainingId,groupDOList);
+
+        return ResultBean.success(groupUserVOList);
     }
 
 
