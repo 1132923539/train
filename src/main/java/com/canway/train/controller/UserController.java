@@ -2,17 +2,14 @@ package com.canway.train.controller;
 
 import com.baomidou.mybatisplus.mapper.Condition;
 import com.canway.train.bean.ResultBean;
-import com.canway.train.entity.KanBanDO;
 import com.canway.train.entity.UserDO;
 import com.canway.train.service.UserService;
+import com.canway.train.vo.UserVo;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
-import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import com.canway.train.vo.UserVo;
 
-import javax.websocket.server.PathParam;
 import java.util.List;
 
 
@@ -64,8 +61,8 @@ public class UserController {
     @PutMapping(value = "/userPassword",produces = "application/json;charset=UTF-8")
     public ResultBean updatePassword(@RequestBody UserVo userVo){
         UserDO userDO = userService.selectById(userVo.getId());
-        if(!userVo.getOldPassword().equals(userDO.getPassword())){
-            return ResultBean.fail(null,"原密码错误",HttpStatus.SERVICE_UNAVAILABLE);
+        if (!userVo.getOldPassword().equals(userDO.getPassword())) {
+            return ResultBean.fail(null, "原密码错误", HttpStatus.SERVICE_UNAVAILABLE);
         }
 
         userDO.setPassword(userVo.getNewPassword());
