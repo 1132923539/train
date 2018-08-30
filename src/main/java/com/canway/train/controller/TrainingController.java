@@ -1,5 +1,6 @@
 package com.canway.train.controller;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.canway.train.bean.ResultBean;
 import com.canway.train.entity.TrainingDO;
 import com.canway.train.service.TrainingService;
@@ -26,6 +27,18 @@ public class TrainingController {
     @GetMapping("/trainingList")
     public ResultBean listAllTraining() {
         List<TrainingDO> trainingList = trainingService.selectList(null);
+        if (trainingList == null) {
+            trainingList = new ArrayList<>();
+        }
+        return ResultBean.success(trainingList, "success", HttpStatus.OK);
+    }
+
+    /**
+     * 获取当前进行中的培训
+     */
+    @GetMapping("/currentTraining")
+    public ResultBean listCurrentTraining() {
+        List<TrainingDO> trainingList = trainingService.selectList(new EntityWrapper<TrainingDO>().eq("is_open", 1));
         if (trainingList == null) {
             trainingList = new ArrayList<>();
         }
