@@ -9,8 +9,8 @@ import lombok.Data;
 @Data
 public class GroupScoreVO extends GroupDO {
 
+    private Long scoreId;
+
     private Integer score;
-
-
 
 }
