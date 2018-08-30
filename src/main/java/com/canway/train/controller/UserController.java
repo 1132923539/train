@@ -61,7 +61,7 @@ public class UserController {
     @PutMapping(value = "/userPassword",produces = "application/json;charset=UTF-8")
     public ResultBean updatePassword(@RequestBody UserVo userVo){
         UserDO userDO = userService.selectById(userVo.getId());
-        if(userDO==null){
+        if (userDO == null) {
             return ResultBean.fail(null, "用户不存在", HttpStatus.SERVICE_UNAVAILABLE);
         }
         if (!userVo.getOldPassword().equals(userDO.getPassword())) {
