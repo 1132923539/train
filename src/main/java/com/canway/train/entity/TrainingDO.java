@@ -15,6 +15,7 @@ import java.util.Date;
 @EqualsAndHashCode()
 @TableName("t_training")
 @AllArgsConstructor
+@NoArgsConstructor
 public class TrainingDO {
     private static final long serialVersionUID = 1L;
 

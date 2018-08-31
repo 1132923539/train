@@ -60,7 +60,7 @@ public class RuleScoreServiceImpl extends BaseServiceImpl<RuleScoreMapper, RuleS
             List<String> names = new ArrayList<String>();
             for (GroupUserDO groupUserDO : groupUsers) {
                 Long userId = groupUserDO.getUserId();
-                UserDO userDO = userService.selectById(new EntityWrapper<UserDO>().eq("user_id", userId));
+                UserDO userDO = userService.selectById(new EntityWrapper<UserDO>().eq("id", userId));
                 names.add(userDO.getName());
             }
 
