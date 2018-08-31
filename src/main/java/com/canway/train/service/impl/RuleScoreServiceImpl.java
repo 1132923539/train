@@ -49,8 +49,12 @@ public class RuleScoreServiceImpl extends BaseServiceImpl<RuleScoreMapper, RuleS
         for (RuleScoreDO ruleScoreDO : ruleScores) {
 
             //给RuleScoreVO 赋值组名
-            Stream<String> groupNames = groups.stream().filter(group -> ruleScoreDO.getGroupId().equals(group.getId())).map(g -> g.getName());
-            String groupName = (String) groupNames.toArray()[0];
+            Stream<String> groupNamesStream = groups.stream().filter(group -> ruleScoreDO.getGroupId().equals(group.getId())).map(g -> g.getName());
+            Object[] groupNames = groupNamesStream.toArray();
+            String groupName = null;
+            if (groupNames.length != 0) {
+                groupName = (String) groupNames[0];
+            }
             RuleScoreVO ruleScoreVO = new RuleScoreVO();
             ruleScoreVO.setGroupName(groupName);
 
@@ -60,7 +64,7 @@ public class RuleScoreServiceImpl extends BaseServiceImpl<RuleScoreMapper, RuleS
             List<String> names = new ArrayList<String>();
             for (GroupUserDO groupUserDO : groupUsers) {
                 Long userId = groupUserDO.getUserId();
-                UserDO userDO = userService.selectById(new EntityWrapper<UserDO>().eq("id", userId));
+                UserDO userDO = userService.selectById(userId);
                 names.add(userDO.getName());
             }
 
