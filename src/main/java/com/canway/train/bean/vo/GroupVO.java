@@ -10,5 +10,6 @@ public class GroupVO {
     private Long trainingId;
     private String trainingName;
     private String users;
+    private Long [] userIds;
 
 }
