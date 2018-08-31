@@ -1,6 +1,5 @@
 package com.canway.train.controller;
 
-import com.baomidou.mybatisplus.mapper.Condition;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.canway.train.bean.ResultBean;
 import com.canway.train.bean.vo.GroupCreatorInfo;
@@ -9,7 +8,6 @@ import com.canway.train.entity.GroupDO;
 import com.canway.train.entity.TrainingDO;
 import com.canway.train.service.GroupService;
 import com.canway.train.service.TrainingService;
-import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

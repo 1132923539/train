@@ -3,7 +3,6 @@ package com.canway.train.service.impl;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.canway.train.bean.ResultBean;
 import com.canway.train.bean.vo.GroupCreatorInfo;
-import com.canway.train.bean.vo.GroupScoreVO;
 import com.canway.train.bean.vo.GroupVO;
 import com.canway.train.entity.GroupDO;
 import com.canway.train.entity.GroupUserDO;
@@ -41,7 +40,7 @@ public class GroupServiceImpl extends BaseServiceImpl<GroupMapper,GroupDO> imple
         Boolean result = this.insert(groupDO);
         if (result){
             groupCreatorInfo.setId(groupDO.getId());
-            Long [] users = groupCreatorInfo.getUsers();
+            Long [] users = groupCreatorInfo.getUserIds();
             if (users != null && users.length >0){
                 for (Long userId:users) {
                     GroupUserDO groupUserDO = new GroupUserDO();
@@ -97,15 +96,18 @@ public class GroupServiceImpl extends BaseServiceImpl<GroupMapper,GroupDO> imple
                                 .eq("training_id",trainingDO.getId()).eq("group_id",groupDO.getId()));
                         if (groupUserDOList != null && groupUserDOList.size() > 0){
                             StringBuffer users = new StringBuffer();
-                            for (GroupUserDO groupUserDO :groupUserDOList){
-                                UserDO userDO = userService.selectById(groupUserDO.getUserId());
+                            Long [] userIds = new Long[groupUserDOList.size()];
+                            for (int i=0;i< groupUserDOList.size();i++){
+                                UserDO userDO = userService.selectById(groupUserDOList.get(i).getUserId());
                                 if (userDO != null && userDO.getName() != null){
                                     users.append(userDO.getName() + ",");
+                                    userIds[i] = userDO.getId();
                                 }
                             }
                             if (users.length() > 0){
                                 groupVO.setUsers(users.substring(0,users.length()-1));
                             }
+                            groupVO.setUserIds(userIds);
                         }
 
 

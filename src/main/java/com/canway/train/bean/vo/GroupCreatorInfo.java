@@ -12,5 +12,5 @@ import java.util.List;
 @Data
 public class GroupCreatorInfo extends GroupDO {
 
-    Long [] users;
+    Long [] userIds;
 }
