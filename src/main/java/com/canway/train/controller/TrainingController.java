@@ -90,7 +90,7 @@ public class TrainingController {
         }
 
         trainingDO.setId(id);
-        boolean b = trainingService.updateById(trainingDO);
+        boolean b = trainingService.updateAllColumnById(trainingDO);
         return ResultBean.success(b, "success", HttpStatus.OK);
     }
 

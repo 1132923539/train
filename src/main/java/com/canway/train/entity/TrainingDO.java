@@ -1,10 +1,7 @@
 package com.canway.train.entity;
 
 import com.baomidou.mybatisplus.annotations.TableName;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Date;
 
@@ -17,6 +14,7 @@ import java.util.Date;
 @ToString(callSuper = true)
 @EqualsAndHashCode()
 @TableName("t_training")
+@AllArgsConstructor
 public class TrainingDO {
     private static final long serialVersionUID = 1L;
 
@@ -49,4 +47,5 @@ public class TrainingDO {
      * 培训开关
      */
     private Integer isOpen;
+
 }
