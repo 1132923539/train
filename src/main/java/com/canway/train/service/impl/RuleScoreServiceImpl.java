@@ -3,10 +3,12 @@ package com.canway.train.service.impl;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.canway.train.bean.RuleScoreVO;
 import com.canway.train.entity.GroupDO;
+import com.canway.train.entity.GroupUserDO;
 import com.canway.train.entity.RuleScoreDO;
 import com.canway.train.entity.UserDO;
 import com.canway.train.mapper.RuleScoreMapper;
 import com.canway.train.service.GroupService;
+import com.canway.train.service.GroupUserService;
 import com.canway.train.service.RuleScoreService;
 import com.canway.train.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,9 @@ public class RuleScoreServiceImpl extends BaseServiceImpl<RuleScoreMapper, RuleS
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private GroupUserService groupUserService;
+
     @Override
     public List<RuleScoreVO> listAllRuleScore(Long trainingId) {
         List<RuleScoreVO> scoreVOList = new ArrayList<>();
@@ -40,6 +45,7 @@ public class RuleScoreServiceImpl extends BaseServiceImpl<RuleScoreMapper, RuleS
         List<GroupDO> groups = groupService.selectList(new EntityWrapper<GroupDO>().eq("training_id", trainingId));
         List<UserDO> users = userService.selectList(null);
 
+
         for (RuleScoreDO ruleScoreDO : ruleScores) {
 
             //给RuleScoreVO 赋值组名
@@ -49,8 +55,16 @@ public class RuleScoreServiceImpl extends BaseServiceImpl<RuleScoreMapper, RuleS
             ruleScoreVO.setGroupName(groupName);
 
             //给RuleScoreVO 赋值用户字段
-            Object[] userNames = users.stream().map(user -> user.getName()).toArray();
-            String members = this.arrayToString(userNames);
+            Long groupId = ruleScoreDO.getGroupId();
+            List<GroupUserDO> groupUsers = groupUserService.selectList(new EntityWrapper<GroupUserDO>().eq("group_id", groupId).eq("training_id", trainingId));
+            List<String> names = new ArrayList<String>();
+            for (GroupUserDO groupUserDO : groupUsers) {
+                Long userId = groupUserDO.getUserId();
+                UserDO userDO = userService.selectById(new EntityWrapper<UserDO>().eq("user_id", userId));
+                names.add(userDO.getName());
+            }
+
+            String members = this.arrayToString(names.toArray());
             ruleScoreVO.setMembers(members);
 
             //给RuleScoreVO 赋值规则加分字段
@@ -61,7 +75,7 @@ public class RuleScoreServiceImpl extends BaseServiceImpl<RuleScoreMapper, RuleS
 
             // 给RuleScoreVO 赋值规则扣分字段
             if (score < 0) {
-                ruleScoreVO.setScore(score);
+                ruleScoreVO.setPoints(score);
             }
 
             // 给RuleScoreVO 赋值备注字段

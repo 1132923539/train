@@ -36,7 +36,6 @@ public class RuleScoreController {
         return ResultBean.success(scoreVOList, "success", HttpStatus.OK);
     }
 
-
     /**
      * 更新
      *
